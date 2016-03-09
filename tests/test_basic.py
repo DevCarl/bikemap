@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .context import seat_organiser as s
+from .context import bike_scraper as s
 
 import unittest
 
