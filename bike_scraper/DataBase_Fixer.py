@@ -8,7 +8,7 @@ try:
     c.execute('''CREATE TABLE Station_Details(Station_Number INT PRIMARY KEY,
                 Station_Name CHAR(50), latitude REAL, longitude REAL, Total_Spaces INT,
                 Banking BOOLEAN, Bonus BOOLEAN)''')
-    c.execute('''INSERT INTO Station_Details(Station_Number, Station_Name, latitude, longtitude, Total_Spaces, Banking, Bonus)
+    c.execute('''INSERT INTO Station_Details(Station_Number, Station_Name, latitude, longitude, Total_Spaces, Banking, Bonus)
             SELECT Station_Number, Station_Name, longitude, latitude, Total_Spaces, Banking, Bonus FROM Station_Details_Temp''')
     c.execute('''DROP TABLE Station_Details_Temp''')
     connection.commit()
