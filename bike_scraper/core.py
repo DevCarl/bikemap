@@ -19,7 +19,7 @@ class BikeScraper:
         try:
             c = self.connection.cursor()
             c.execute('''CREATE TABLE IF NOT EXISTS Station_Details(Station_Number INT PRIMARY KEY,
-                    Station_Name CHAR(50), longtitude REAL, latitude REAL, Total_Spaces INT,
+                    Station_Name CHAR(50), latitude REAL, longtitude REAL, Total_Spaces INT,
                     Banking BOOLEAN, Bonus BOOLEAN)''')
             c.execute('''CREATE TABLE IF NOT EXISTS Station_Data(Time_Stamp CHAR(50), Station_Number INT,
                     Last_Updated INT, Available_Bike_Stands INT, Bikes_Available INT, Status BOOLEAN, PRIMARY KEY(Time_Stamp, Station_Number))''')
