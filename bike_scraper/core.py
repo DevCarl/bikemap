@@ -70,7 +70,7 @@ class BikeScraper:
                         for row in hour_search:
                             print(row)
                     except:
-                        "NO RESULTS FOUND"
+                        "NO RESULTS"
                     hour = hour-1
                 hour = 24
                 if countday - 1 < 1:
