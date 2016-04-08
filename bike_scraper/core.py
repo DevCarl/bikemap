@@ -86,6 +86,26 @@ class BikeScraper:
         except ConnectionError:
             return None
 
+    def calculate_freetime(self):
+        c = self.connection.cursor()
+        timeframe = time.time() - 14*24*60*60*1000
+        c.execute("SELECT COUNT(Station_Number) FROM Station_Details")
+        station_range = c.fetchone()[0]
+        for row in range(0, station_range+1):
+            misscount, totalmisscount, totalemptyblocks = 0, 0, 0
+            time_search = c.execute("SELECT * FROM Station_Data WHERE Last_Updated > ? AND Station_Number = ?", (timeframe, row))
+            for row2 in time_search:
+                if row2[4] == 0:
+                    misscount += 1
+                elif row2[4] != 0 and misscount > 0:
+                    totalmisscount += misscount
+                    misscount = 0
+                    totalemptyblocks += 1
+            if misscount > 0:
+                totalmisscount += misscount
+                totalemptyblocks += 1
+            maximumaveragewaitingtime = (totalmisscount/totalemptyblocks)*5 if totalemptyblocks > 0 else 0
+            print(maximumaveragewaitingtime)
 
     def read_data(self):
         try:
