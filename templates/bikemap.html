@@ -1,112 +1,91 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<script src="http://maps.googleapis.com/maps/api/js"></script> <!--This is used to import the API from google-->
-<script>
-    
+    <script src="http://maps.googleapis.com/maps/api/js"></script>
+    <!--This is used to import the API from google-->
+    <script>
+        var map;
 
-    
+
+        function initialize() {
+
+            //The mapProp function is used to define the properties of the google map that we will embed to the page
+            var mapProp = {
+                center: new google.maps.LatLng(53.348096, -6.261584),
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            //This creates a new object in the googleMap div
+            map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+            var xmlhttp = new XMLHttpRequest();
+            var url = "https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=ecb685c01e04147581cfd3c43376765a5ca1098f";
+
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    var bikesites = JSON.parse(xmlhttp.responseText);
+                    addMarkers(bikesites);
+                }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
 
 
-    function myFunction(arr) {
-        var out = "";
-        var i;
-        for(i = 0; i < arr.length; i++) {
-            out += arr[i].name + '<br>';
         }
-        document.getElementById("id01").innerHTML = out;
-    }
-    
-    
-    function initialize() {
 
-        
-        
-        //The mapProp function is used to define the properties of the google map that we will embed to the page
-        var mapProp = {
-            center:new google.maps.LatLng(53.348096, -6.261584),
-            zoom:13,
-            mapTypeId:google.maps.MapTypeId.ROADMAP
-        };
-      //This creates a new object in the googleMap div
-        var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-        
-        var xmlhttp = new XMLHttpRequest();
-        var url = "https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=ecb685c01e04147581cfd3c43376765a5ca1098f";
-        
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                var bikesites = JSON.parse(xmlhttp.responseText);//make the variable global to be used in the google map markers
-                document.getElementById("id01").innerHTML =  + '<br>';
-                for(var i = 0; i < bikesites.length; i++)
-                    {
-                        var data = bikesites[i];
+                    function addMarkers(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var currentSite = data[i];
+                    if (currentSite.available_bikes < 10) {
+                        var infoWindow = new google.maps.InfoWindow();
+
                         
-                        if(bikesites[i].available_bikes < 10){
-                                
-                            
-                            
-                            var infoWindow = new google.maps.InfoWindow();
-                                  
-                                
-                                var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
-                                var marker = new google.maps.Marker({position: coords, map: map,icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'});
-                            
-                                (function(marker, data) {
-                                  // Attaching a click event to the current marker
-                                  google.maps.event.addListener(marker, "click", function(e) {
-                                    infoWindow.close();
-                                    infoWindow.setContent(data.name);
-                                    infoWindow.open(map, marker);
-                                  });
+                        var coords = new google.maps.LatLng(currentSite.position.lat, currentSite.position.lng);
+                        var marker = new google.maps.Marker({
+                            position: coords,
+                            map: map,
+                            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                        });
 
-                                })(marker, data);
-                        }
-                        else if(bikesites[i].available_bikes >= 10)
-                            {
-                                
-                                var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
-                                var marker = new google.maps.Marker({position: coords, map: map,icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'});
-                                (function(marker, data) {
-                                    
+                        (function(marker, data) {
+                            // Attaching a click event to the current marker
+                            google.maps.event.addListener(marker, "click", function(e) {
+                                infoWindow.close();
+                                infoWindow.setContent(data.name);
+                                infoWindow.open(map, marker);
+                            });
 
-                                  // Attaching a click event to the current marker
-                                  google.maps.event.addListener(marker, "click", function(e) {
-                                    
-                                    infoWindow.setContent(data.name);
-                                    infoWindow.open(map, marker);
-                                  });
+                        })(marker, data);
+                    } else if (currentSite.available_bikes >= 10) {
 
-                                })(marker, data);
-                            }
+                        var coords = new google.maps.LatLng(currentSite.position.lat, currentSite.position.lng);
+                        var marker = new google.maps.Marker({
+                            position: coords,
+                            map: map,
+                            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                        });
+                        (function(marker, data) {
+                            // Attaching a click event to the current marker
+                            google.maps.event.addListener(marker, "click", function(e) {
+
+                                infoWindow.setContent(data.name);
+                                infoWindow.open(map, marker);
+                            });
+                        })(marker, data);
                     }
+                }
             }
-        };
-        
-        xmlhttp.open("GET", url, true);
-        xmlhttp.send();
-        
-        
-        //I WANT TO USE THE VARIABLE BIKESITES HERE TO ADD THE MARKERS TO THE MAP!!
-
-        
-    }
-    
-//The DomListener is used to handle events on the map. This says to load the map when the window is loaded
-    google.maps.event.addDomListener(window, 'load', initialize);
-    
-    
-    
-</script>
+        //The DomListener is used to handle events on the map. This says to load the map when the window is loaded
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 </head>
 
 <body>
     <div id="googleMap" style="width:500px; height:380px;"></div>
     <div id="id01"></div>
 </body>
-    <script>
-
-        
-        </script>
+<script>
+</script>
 
 </html>
