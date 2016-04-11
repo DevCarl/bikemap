@@ -89,11 +89,15 @@ class BikeScraper:
     def calculate_freetime(self):
         c = self.connection.cursor()
         timeframe = time.time() - 14*24*60*60*1000
-        c.execute("SELECT COUNT(Station_Number) FROM Station_Details")
-        station_range = c.fetchone()[0]
-        for row in range(0, station_range+1):
+        try:
+            c.execute("ALTER TABLE IF NOT EXISTS Station_Details ADD COLUMN Maximum_Average_Waiting_Time REAL")
+        except:
+            pass
+        st = c.execute("SELECT Station_Number FROM Station_Details")
+        station_range = c.fetchall()
+        for row in station_range:
             misscount, totalmisscount, totalemptyblocks = 0, 0, 0
-            time_search = c.execute("SELECT * FROM Station_Data WHERE Last_Updated > ? AND Station_Number = ?", (timeframe, row))
+            time_search = c.execute("SELECT * FROM Station_Data WHERE Last_Updated > ? AND Station_Number = ?", (timeframe, row[0]))
             for row2 in time_search:
                 if row2[4] == 0:
                     misscount += 1
@@ -105,7 +109,7 @@ class BikeScraper:
                 totalmisscount += misscount
                 totalemptyblocks += 1
             maximumaveragewaitingtime = (totalmisscount/totalemptyblocks)*5 if totalemptyblocks > 0 else 0
-            print(maximumaveragewaitingtime)
+            c.execute("UPDATE Station_Details SET Maximum_Average_Waiting_Time = ? WHERE Station_Number = ?", (maximumaveragewaitingtime, row[0]))
 
     def read_data(self):
         try:
@@ -122,9 +126,10 @@ class BikeScraper:
                         data = ast.literal_eval(inputfile[i])
                         if self.count % 288 == 0:
                             self.count = 0
-                            c.execute("INSERT OR REPLACE INTO Station_Details VALUES(?, ?, ?, ?, ?, ?, ?)",
+                            c.execute("INSERT OR REPLACE INTO Station_Details VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
                                     (data["number"], data["address"], data["position"]["lat"], data["position"]["lng"],
-                                    data["bike_stands"], data["banking"], data["bonus"]))
+                                    data["bike_stands"], data["banking"], data["bonus"], None))
+                            self.calculate_freetime()
                         c.execute("INSERT INTO Station_Data VALUES(?, ?, ?, ?, ?, ?)",
                                     (datetime ,data["number"],data["last_update"],
                                     data["available_bike_stands"], data["available_bikes"], data["status"]))
