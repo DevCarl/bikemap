@@ -78,6 +78,20 @@
             }
         //The DomListener is used to handle events on the map. This says to load the map when the window is loaded
         google.maps.event.addDomListener(window, 'load', initialize);
+        
+        //This is test information to display database information from the Python script
+        
+            var xmlhttp2 = new XMLHttpRequest();
+            var url = "{{ url_for('jsonstuff') }}"
+            console.log(url);
+            xmlhttp2.onreadystatechange = function() {
+                if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
+                    var stuff = JSON.parse(xmlhttp2.responseText);
+                    console.log(stuff);
+                }
+            };
+            xmlhttp2.open("GET", url, true);
+            xmlhttp2.send();
     </script>
 </head>
 
