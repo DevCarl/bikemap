@@ -4,12 +4,14 @@ import sqlite3
 
 from bike_scraper.core import *
 from bike_scraper.analysis import GatherData
+from bike_scraper.averages import *
 
 app = Flask(__name__)
 
 DATABASE = 'bike_scraper/bikedata.db'
 jsonFetcher = GatherData()
 scraper = BikeScraper()
+ave = averager()
 
 def connect_to_database():
     return sqlite3.connect(DATABASE)
@@ -27,10 +29,11 @@ def close_connection(exception):
         db.close()
 
 
-@app.route('/getjson')
-def jsonstuff():
+@app.route('/getjson/<sid>')
+def jsonstuff(sid):
     cur = get_db().cursor()
-    row = scraper.archive_data_now(cur)
+    row = ave.getDayAverage(cur, sid,'Monday')
+    print(row)
     jsonFile = jsonFetcher.generate_json(row)
     return jsonFile
     
