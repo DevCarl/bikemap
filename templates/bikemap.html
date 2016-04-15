@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <script src="http://maps.googleapis.com/maps/api/js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!--This is used to import the API from google-->
@@ -162,8 +163,13 @@
 </head>
 
 <body>
-    <div id="googleMap" style="width:500px; height:380px;"></div>
-    <div id="id01" style="height: 300px;"></div>
+    <header></header>
+    
+    <div id="wrapper">
+        <div id="googleMap"></div>
+        <div id="id01"></div>
+    </div>
+    
 </body>
 <script>
 </script>
