@@ -7,13 +7,11 @@ class averager(object):
         #available bikes for that DAY
         dailyData = []
         selected_day = self.getDay(day)
+        data = cur.execute('SELECT round(avg(Bikes_Available)) FROM Station_data WHERE Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)', (id, selected_day))  
+        reading = data.fetchall()
         
-        for x in range(6,24):
-            selected_hour = self.getHour(x)
-            data = cur.execute('SELECT round(avg(Bikes_Available)) FROM Station_data WHERE Station_number = ? AND strftime("%H",Time_Stamp) IN (?) AND strftime("%w",Time_Stamp) IN (?)', (id, selected_hour,selected_day))
-            reading = data.fetchall()
-            
-            dailyData.append(str(reading[0][0]))
+        for i in reading:
+            dailyData.append(str(i[0]))
         
         return dailyData
         

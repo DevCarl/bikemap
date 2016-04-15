@@ -39,10 +39,8 @@ def jsonstuff(sid):
     
 
 @app.route('/')
-def hello_world():
+def homePage():
     return render_template('bikemap.html')
-
-    
 
 if __name__ == '__main__':
     app.run(debug = True)
