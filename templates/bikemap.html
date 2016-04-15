@@ -9,6 +9,7 @@
         var map;
 
         function initialize() {
+            console.log("callecd");
             //The mapProp function is used to define the properties of the google map that we will embed to the page
             var mapProp = {
                 center: new google.maps.LatLng(53.348096, -6.261584),
@@ -88,6 +89,8 @@
 
         //The DomListener is used to handle events on the map. This says to load the map when the window is loaded
         google.maps.event.addDomListener(window, 'load', initialize);
+        
+        setInterval(initialize, 300000);
         
         function createChart(marker){
             var number = marker.title;

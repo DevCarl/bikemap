@@ -28,66 +28,10 @@ class BikeScraper:
             c.close()
         except ConnectionError:
             return None
-
-    def archive_data_now(self, c):
-    
-            string = time.strftime("%Y-%m-%d %H:%M")
-            minute = int(string[-2].replace(":", ""))
-            count = int(minute)
-            while count > minute-5:
             
-                string = string[0:-1] + "0"*(count < 10) + str(count)
-                row_search = c.execute("SELECT * FROM Station_Data WHERE instr(Time_Stamp, ?) > 0", [string])
-                rows = rows_search.fetchall()
-                if len(rows) == 0:
-                    if count - 1 < 0:
-                        count = count + 60
-                        minute = minute + 60
-                    count -= 1
-            
-       
-
-    def archive_data_average(self):
-        try:
-            c = self.connection.cursor()
-            monthrange = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1]
-            year, month, day, hour = datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day, datetime.datetime.now().hour
-            countday = day
-            while countday > day-14:
-                daystring = str(year) + "-" + "0"*(month < 10) + str(month) + "-" + "0"*(countday < 10) + str(countday)
-                day_search = c.execute("SELECT Time_Stamp, Station_Number, avg(Bikes_Available) FROM Station_Data WHERE instr(Time_Stamp, ?) > 0 GROUP BY Station_Number", [daystring])
-                for row in day_search:
-                    print(row)
-                while hour >= 0:
-                    try:
-                        hourstring = str(year) + "-" + "0"*(month < 10) + str(month) + "-" + "0"*(countday < 10) + str(countday) + " " + "0"*(hour < 10) + str(hour)
-                        hour_search = c.execute("SELECT Time_Stamp, Station_Number, avg(Bikes_Available) FROM Station_Data WHERE instr(Time_Stamp, ?) > 0 GROUP BY Station_Number", [hourstring])
-                        for row in hour_search:
-                            print(row)
-                    except:
-                        "NO RESULTS"
-                    hour = hour-1
-                hour = 24
-                if countday - 1 < 1:
-                    countday = countday + monthrange
-                    day = day + monthrange
-                    if month - 1 < 1:
-                        month = month + 12
-                        year -= 1
-                    month = month-1
-                countday = countday-1
-            self.connection.commit()
-            c.close()
-        except ConnectionError:
-            return None
-
     def calculate_freetime(self):
         c = self.connection.cursor()
         timeframe = time.time() - 14*24*60*60*1000
-        try:
-            c.execute("ALTER TABLE IF NOT EXISTS Station_Details ADD COLUMN Maximum_Average_Waiting_Time REAL")
-        except:
-            pass
         st = c.execute("SELECT Station_Number FROM Station_Details")
         station_range = c.fetchall()
         for row in station_range:
@@ -121,10 +65,9 @@ class BikeScraper:
                         data = ast.literal_eval(inputfile[i])
                         if self.count % 288 == 0:
                             self.count = 0
-                            c.execute("INSERT OR REPLACE INTO Station_Details VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+                            c.execute("INSERT OR REPLACE INTO Station_Details VALUES(?, ?, ?, ?, ?, ?, ?)",
                                     (data["number"], data["address"], data["position"]["lat"], data["position"]["lng"],
-                                    data["bike_stands"], data["banking"], data["bonus"], None))
-                            self.calculate_freetime()
+                                    data["bike_stands"], data["banking"], data["bonus"]))
                         c.execute("INSERT INTO Station_Data VALUES(?, ?, ?, ?, ?, ?)",
                                     (datetime ,data["number"],data["last_update"],
                                     data["available_bike_stands"], data["available_bikes"], data["status"]))
