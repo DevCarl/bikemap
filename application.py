@@ -32,9 +32,9 @@ def close_connection(exception):
 @app.route('/getjson/<sid>')
 def jsonstuff(sid):
     cur = get_db().cursor()
-    row = ave.getDayAverage(cur, sid,'Monday')
-    print(row)
-    jsonFile = jsonFetcher.generate_json(row)
+    hourly = ave.getHourAverage(cur, sid,'Monday')
+    daily = ave.getDayAverage(cur, sid)
+    jsonFile = jsonFetcher.generate_json(hourly, daily)
     return jsonFile
     
 

@@ -6,8 +6,8 @@ from bike_scraper.core import BikeScraper
 
 
 if __name__ == '__main__':
-    #name = BikeScraper()
+    name = BikeScraper()
     #name.create_database()
-    #name.collect_data()
+    name.collect_data()
     #name.archive_data_average()
     pass
