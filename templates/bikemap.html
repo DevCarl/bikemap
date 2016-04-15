@@ -3,13 +3,12 @@
 
 <head>
     <script src="http://maps.googleapis.com/maps/api/js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!--This is used to import the API from google-->
     <script>
         var map;
 
-
         function initialize() {
-
             //The mapProp function is used to define the properties of the google map that we will embed to the page
             var mapProp = {
                 center: new google.maps.LatLng(53.348096, -6.261584),
@@ -18,86 +17,149 @@
             };
             //This creates a new object in the googleMap div
             map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+            
+            addMarkers(map);
+        }
 
+        function addMarkers(map) {
             var xmlhttp = new XMLHttpRequest();
             var url = "https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=ecb685c01e04147581cfd3c43376765a5ca1098f";
 
             xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    var bikesites = JSON.parse(xmlhttp.responseText);
-                    addMarkers(bikesites);
-                }
-            };
-            xmlhttp.open("GET", url, true);
-            xmlhttp.send();
+                    var bikesites = JSON.parse(xmlhttp.responseText); //make the variable global to be used in the google map markers
+
+                    for (var i = 0; i < bikesites.length; i++) {
+                        var data = bikesites[i];
+
+                        if (bikesites[i].available_bikes < 10) {
 
 
-        }
 
-                    function addMarkers(data) {
-                for (var i = 0; i < data.length; i++) {
-                    var currentSite = data[i];
-                    if (currentSite.available_bikes < 10) {
-                        var infoWindow = new google.maps.InfoWindow();
+                            var infoWindow = new google.maps.InfoWindow();
 
-                        
-                        var coords = new google.maps.LatLng(currentSite.position.lat, currentSite.position.lng);
-                        var marker = new google.maps.Marker({
-                            position: coords,
-                            map: map,
-                            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-                        });
 
-                        (function(marker, data) {
-                            // Attaching a click event to the current marker
-                            google.maps.event.addListener(marker, "click", function(e) {
-                                infoWindow.close();
-                                infoWindow.setContent(data.name);
-                                infoWindow.open(map, marker);
+                            var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
+                            var marker = new google.maps.Marker({
+                                position: coords,
+                                map: map,
+                                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
                             });
 
-                        })(marker, data);
-                    } else if (currentSite.available_bikes >= 10) {
+                            (function(marker, data) {
+                                // Attaching a click event to the current marker
+                                google.maps.event.addListener(marker, "click", function(e) {
+                                    infoWindow.close();
+                                    infoWindow.setContent(data.name);
+                                    infoWindow.open(map, marker);
+                                    document.getElementById("id01").innerHTML = data.name;
+                                });
 
-                        var coords = new google.maps.LatLng(currentSite.position.lat, currentSite.position.lng);
-                        var marker = new google.maps.Marker({
-                            position: coords,
-                            map: map,
-                            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-                        });
-                        (function(marker, data) {
-                            // Attaching a click event to the current marker
-                            google.maps.event.addListener(marker, "click", function(e) {
+                            })(marker, data);
+                        } else if (bikesites[i].available_bikes >= 10) {
 
-                                infoWindow.setContent(data.name);
-                                infoWindow.open(map, marker);
+                            var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
+                            var marker = new google.maps.Marker({
+                                position: coords,
+                                map: map,
+                                icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                                title: bikesites[i].number.toString()
                             });
-                        })(marker, data);
+                            (function(marker, data) {
+
+
+                                // Attaching a click event to the current marker
+                                google.maps.event.addListener(marker, "click", function(e) {
+                                    createChart(marker);
+                                    infoWindow.setContent(data.name);
+                                    infoWindow.open(map, marker);
+                                    document.getElementById("id01").innerHTML = data.name;
+                                });
+
+                            })(marker, data);
+                        }
                     }
                 }
-            }
+            };
+
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
         //The DomListener is used to handle events on the map. This says to load the map when the window is loaded
         google.maps.event.addDomListener(window, 'load', initialize);
         
-        //This is test information to display database information from the Python script
-        
+        function createChart(marker){
+            var number = marker.title;
             var xmlhttp2 = new XMLHttpRequest();
-            var url = "{{ url_for('jsonstuff') }}"
-            console.log(url);
+            var url = "/getjson/" + number;
+
             xmlhttp2.onreadystatechange = function() {
                 if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
-                    var stuff = JSON.parse(xmlhttp2.responseText);
-                    console.log(stuff);
+                    var data = JSON.parse(xmlhttp2.responseText);
+                    drawChart(data);
                 }
             };
             xmlhttp2.open("GET", url, true);
             xmlhttp2.send();
+        }
+        
+        google.charts.load('current', {packages: ['corechart']});
+        
+        function drawChart(dailydata) {
+            console.log(dailydata[0].Times);
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Time');
+            data.addColumn('number', 'Available Bikes');
+            data.addRow(["06:00", parseInt(dailydata[0].Times[0])]);
+            data.addRow(["07:00", parseInt(dailydata[0].Times[1])]);
+            data.addRow(["08:00", parseInt(dailydata[0].Times[2])]);
+            data.addRow(["09:00", parseInt(dailydata[0].Times[3])]);
+            data.addRow(["10:00", parseInt(dailydata[0].Times[4])]);
+            data.addRow(["11:00", parseInt(dailydata[0].Times[5])]);
+            data.addRow(["12:00", parseInt(dailydata[0].Times[6])]);
+            data.addRow(["13:00", parseInt(dailydata[0].Times[7])]);
+            data.addRow(["14:00", parseInt(dailydata[0].Times[8])]);
+            data.addRow(["15:00", parseInt(dailydata[0].Times[9])]);
+            data.addRow(["16:00", parseInt(dailydata[0].Times[10])]);
+            data.addRow(["17:00", parseInt(dailydata[0].Times[11])]);
+            data.addRow(["18:00", parseInt(dailydata[0].Times[12])]);
+            data.addRow(["19:00", parseInt(dailydata[0].Times[13])]);
+            data.addRow(["20:00", parseInt(dailydata[0].Times[14])]);
+            data.addRow(["21:00", parseInt(dailydata[0].Times[15])]);
+            data.addRow(["22:00", parseInt(dailydata[0].Times[16])]);
+            data.addRow(["23:00", parseInt(dailydata[0].Times[17])]);
+
+            var options = {
+                titlePosition: 'none',
+                legend: {
+                    position: 'none'
+                },
+                curveType: 'function',
+                colors: ['lightblue'],
+                bar: {
+                    gap: 5
+                },
+                gridlines: {
+                    color: 'none'
+                },
+                vAxis: {
+                    gridlines: {
+                        color: 'transparent'
+                    },
+                    title: 'Available Bikes'
+                }
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById("id01"));
+            chart.draw(data, options);
+        }
+
     </script>
 </head>
 
 <body>
     <div id="googleMap" style="width:500px; height:380px;"></div>
-    <div id="id01"></div>
+    <div id="id01" style="height: 300px;"></div>
 </body>
 <script>
 </script>

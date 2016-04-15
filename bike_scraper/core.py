@@ -29,28 +29,23 @@ class BikeScraper:
         except ConnectionError:
             return None
 
-    def archive_data_now(self):
-        try:
-            c = self.connection.cursor()
+    def archive_data_now(self, c):
+    
             string = time.strftime("%Y-%m-%d %H:%M")
             minute = int(string[-2].replace(":", ""))
             count = int(minute)
             while count > minute-5:
-                try:
-                    string = string[0:-1] + "0"*(count < 10) + str(count)
-                    row_search = c.execute("SELECT * FROM Station_Data WHERE instr(Time_Stamp, ?) > 0", [string])
-                    for row in row_search:
-                        print(row)
-                    break
-                except:
+            
+                string = string[0:-1] + "0"*(count < 10) + str(count)
+                row_search = c.execute("SELECT * FROM Station_Data WHERE instr(Time_Stamp, ?) > 0", [string])
+                rows = rows_search.fetchall()
+                if len(rows) == 0:
                     if count - 1 < 0:
                         count = count + 60
                         minute = minute + 60
                     count -= 1
-            self.connection.commit()
-            c.close()
-        except ConnectionError:
-            return None
+            
+       
 
     def archive_data_average(self):
         try:
