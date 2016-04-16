@@ -29,10 +29,10 @@ def close_connection(exception):
         db.close()
 
 
-@app.route('/getjson/<sid>')
-def jsonstuff(sid):
+@app.route('/getjson/<sid>/<day>')
+def jsonstuff(sid, day):
     cur = get_db().cursor()
-    hourly = ave.getHourAverage(cur, sid,'Monday')
+    hourly = ave.getHourAverage(cur, sid, day)
     daily = ave.getDayAverage(cur, sid)
     jsonFile = jsonFetcher.generate_json(hourly, daily)
     return jsonFile

@@ -2,12 +2,15 @@
 <html>
 
 <head>
+    <!--<link rel="stylesheet" type="text/css" href="style.css">-->
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <script src="http://maps.googleapis.com/maps/api/js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!--This is used to import the API from google-->
     <script>
         var map;
+        var currentStation;
+        var currentStationNo;
 
         function initialize() {
             console.log("callecd");
@@ -43,7 +46,10 @@
                             iconColor = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
                         }
 
-
+                        //Now we need to use the data to create the content for the infowindow
+                        
+                        
+                        
                         var infoWindow = new google.maps.InfoWindow();
                         var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
                         var marker = new google.maps.Marker({
@@ -57,10 +63,19 @@
 
                             // Attaching a click event to the current marker
                             google.maps.event.addListener(marker, "click", function(e) {
-                                insertAddInfo(marker, data);
-                                infoWindow.setContent((data.available_bikes / data.bike_stands).toString());
+                                content =     '<div class="infoContent">'+
+                                                '<h3>' + data.name + '</h3>'+
+                                                '<p>Station Number: ' + data.number + '</p>'+
+                                                '<p>Total Bike Stands: ' + data.bike_stands + '</p>'+
+                                                '<p>Available Bikes: ' + data.available_bikes + '</p>'+
+                                                '<p>Available Stands: ' + data.available_bike_stands + '</p>'+
+                                                '<p class="moreinfo" onclick="insertAddInfo()">More Info</p>'+
+                                            '</div>';
+                                    
+                                currentStation = data.address;
+                                currentStationNo = data.number;
+                                infoWindow.setContent(content);
                                 infoWindow.open(map, marker);
-                                document.getElementById("id01").innerHTML = data.name;
                             });
 
                         })(marker, data);
@@ -78,18 +93,22 @@
 
         setInterval(initialize, 300000);
 
-        function insertAddInfo(marker, data) {
+        function insertAddInfo() {
             //Set the additional info title
-
+            document.getElementById("infoTitle").innerHTML = '<h2>Information for: '+ currentStation + '</h2>';
+            document.getElementById("additionalInfo").style.display = 'block';
             //Create the charts
-            createChart(marker);
+            createChart('Monday');
         }
 
 
-        function createChart(marker) {
-            var number = marker.title;
+        function createChart(requestedDay) {
+            console.log(currentStation);
+            console.log(currentStationNo);
+            document.getElementById("selectedDay").innerHTML = requestedDay;
             var xmlhttp2 = new XMLHttpRequest();
-            var url = "/getjson/" + number;
+            var url = "/getjson/" + currentStationNo + "/" + requestedDay;
+            console.log(url);
 
             xmlhttp2.onreadystatechange = function() {
                 if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
@@ -145,12 +164,15 @@
 
 
             var options = {
+                animation: {"startup": true,
+                           duration: 1000,
+                            easing: 'out'},
                 titlePosition: 'none',
                 legend: {
                     position: 'none'
                 },
                 curveType: 'function',
-                colors: ['lightcoral'],
+                colors: ['#084C55'],
                 bar: {
                     gap: 10
                 },
@@ -176,13 +198,14 @@
                     position: 'none'
                 },
                 curveType: 'function',
-                colors: ['lightcoral'],
+                colors: ['#084C55'],
                 bar: {
                     gap: 10
                 },
                 gridlines: {
                     color: 'none'
                 },
+                animation: {"startup": true},
                 vAxis: {
                     gridlines: {
                         color: 'transparent'
@@ -193,9 +216,9 @@
 
 
             };
-            var chart = new google.visualization.ColumnChart(document.getElementById("id01"));
+            var chart = new google.visualization.ColumnChart(document.getElementById("hourlyChart"));
             chart.draw(data, options);
-            var chart2 = new google.visualization.ColumnChart(document.getElementById("id02"));
+            var chart2 = new google.visualization.ColumnChart(document.getElementById("dailyChart"));
             chart2.draw(data2, options2);
         }
     </script>
@@ -208,14 +231,37 @@
     </header>
 
     <div id="wrapper">
-        <div id="googleMap"></div>
-        <div id="additonalInfo">
-            <div id="id01"></div>
-            <div id="id02"></div>
+        <div id="mapArea">
+            <div class="sectionTitle">
+                <h2>Station Map</h2>
+            </div>
+            <div id="googleMap"></div>
+        </div>
+        
+        <div id="additionalInfo">
+            <div id="infoTitle"></div>
+            <div id="hchartarea">
+                <div id=hcharttitle><h4>Hourly Average Available Bikes on:&nbsp; </h4><h4 id="selectedDay">Monday</h4></div>
+                                
+                
+                <ul id="daylist">
+                    <li onclick="createChart('Monday')">Monday</li>
+                    <li onclick="createChart('Tuesday')">Tuesday</li>
+                    <li onclick="createChart('Wednesday')">Wednesday</li>
+                    <li onclick="createChart('Thursday')">Thursday</li>
+                    <li onclick="createChart('Friday')">Friday</li>
+                    <li onclick="createChart('Saturday')">Saturday</li>
+                    <li onclick="createChart('Sunday')">Sunday</li>
+                </ul>
+                <div id="hourlyChart"></div>
+            </div>
+            <div id="dchartarea">
+                <div id=dcharttitle><h4>Daily Average Available Bikes</h4></div>
+                <div id="dailyChart"></div>
+            </div>
         </div>
 
     </div>
-
 </body>
 <script>
 </script>
