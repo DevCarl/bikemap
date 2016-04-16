@@ -7,8 +7,22 @@ body, html{
 
 header{
     width: 100%;
-    height: 150px;
+    height: 130px;
     background-color: #084C55;
+}
+
+#headerimage{
+    display: inline;
+    margin-left: 30%;
+}
+
+#headertitle{
+    font-family: Arial, sans-serif;
+    vertical-align: top;
+    position: relative;
+    top: 45px;
+    display: inline;
+    color: white;
 }
 
 #wrapper{
@@ -25,6 +39,17 @@ header{
     height: 500px;
 }
 
+#additionalInfo{
+    width: 100%;
+    text-align: center;
+}
+
 #id01{
-    height: 500px;
+    height: 300px;
+    width: 900px;
+}
+
+#id02{
+    height: 300px;
+    width: 900px;
 }

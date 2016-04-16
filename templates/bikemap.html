@@ -19,7 +19,7 @@
             };
             //This creates a new object in the googleMap div
             map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-            
+
             addMarkers(map);
         }
 
@@ -34,52 +34,37 @@
                     for (var i = 0; i < bikesites.length; i++) {
                         var data = bikesites[i];
 
-                        if (bikesites[i].available_bikes < 10) {
-
-
-
-                            var infoWindow = new google.maps.InfoWindow();
-
-
-                            var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
-                            var marker = new google.maps.Marker({
-                                position: coords,
-                                map: map,
-                                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-                            });
-
-                            (function(marker, data) {
-                                // Attaching a click event to the current marker
-                                google.maps.event.addListener(marker, "click", function(e) {
-                                    infoWindow.close();
-                                    infoWindow.setContent(data.name);
-                                    infoWindow.open(map, marker);
-                                    document.getElementById("id01").innerHTML = data.name;
-                                });
-
-                            })(marker, data);
-                        } else if (bikesites[i].available_bikes >= 10) {
-
-                            var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
-                            var marker = new google.maps.Marker({
-                                position: coords,
-                                map: map,
-                                icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                                title: bikesites[i].number.toString()
-                            });
-                            (function(marker, data) {
-
-
-                                // Attaching a click event to the current marker
-                                google.maps.event.addListener(marker, "click", function(e) {
-                                    createChart(marker);
-                                    infoWindow.setContent(data.name);
-                                    infoWindow.open(map, marker);
-                                    document.getElementById("id01").innerHTML = data.name;
-                                });
-
-                            })(marker, data);
+                        //Decide on the colour icon to use:
+                        if (data.available_bikes / data.bike_stands > 0.5) {
+                            iconColor = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+                        } else if (data.available_bikes / data.bike_stands > 0.25) {
+                            iconColor = 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+                        } else{
+                            iconColor = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
                         }
+
+
+                        var infoWindow = new google.maps.InfoWindow();
+                        var coords = new google.maps.LatLng(bikesites[i].position.lat, bikesites[i].position.lng);
+                        var marker = new google.maps.Marker({
+                            position: coords,
+                            map: map,
+                            icon: iconColor,
+                            title: bikesites[i].number.toString()
+                        });
+                        (function(marker, data) {
+
+
+                            // Attaching a click event to the current marker
+                            google.maps.event.addListener(marker, "click", function(e) {
+                                insertAddInfo(marker, data);
+                                infoWindow.setContent((data.available_bikes / data.bike_stands).toString());
+                                infoWindow.open(map, marker);
+                                document.getElementById("id01").innerHTML = data.name;
+                            });
+
+                        })(marker, data);
+
                     }
                 }
             };
@@ -90,10 +75,18 @@
 
         //The DomListener is used to handle events on the map. This says to load the map when the window is loaded
         google.maps.event.addDomListener(window, 'load', initialize);
-        
+
         setInterval(initialize, 300000);
-        
-        function createChart(marker){
+
+        function insertAddInfo(marker, data) {
+            //Set the additional info title
+
+            //Create the charts
+            createChart(marker);
+        }
+
+
+        function createChart(marker) {
             var number = marker.title;
             var xmlhttp2 = new XMLHttpRequest();
             var url = "/getjson/" + number;
@@ -107,9 +100,13 @@
             xmlhttp2.open("GET", url, true);
             xmlhttp2.send();
         }
-        
-        google.charts.load('current', {packages: ['corechart']});
-        
+
+        google.charts.load('current', {
+            packages: ['corechart']
+        });
+
+
+
         function drawChart(dailydata) {
             console.log(dailydata[0].Times);
             console.log(dailydata[0].Daily);
@@ -135,15 +132,27 @@
             data.addRow(["22:00", parseInt(dailydata[0].Times[16])]);
             data.addRow(["23:00", parseInt(dailydata[0].Times[17])]);
 
+            var data2 = new google.visualization.DataTable();
+            data2.addColumn('string', 'Day');
+            data2.addColumn('number', 'Available Bikes');
+            data2.addRow(["Sunday", parseInt(dailydata[0].Daily[0])]);
+            data2.addRow(["Monday", parseInt(dailydata[0].Daily[1])]);
+            data2.addRow(["Tuesday", parseInt(dailydata[0].Daily[2])]);
+            data2.addRow(["Wednesday", parseInt(dailydata[0].Daily[3])]);
+            data2.addRow(["Thursday", parseInt(dailydata[0].Daily[4])]);
+            data2.addRow(["Friday", parseInt(dailydata[0].Daily[5])]);
+            data2.addRow(["Saturday", parseInt(dailydata[0].Daily[6])]);
+
+
             var options = {
                 titlePosition: 'none',
                 legend: {
                     position: 'none'
                 },
                 curveType: 'function',
-                colors: ['lightblue'],
+                colors: ['lightcoral'],
                 bar: {
-                    gap: 5
+                    gap: 10
                 },
                 gridlines: {
                     color: 'none'
@@ -152,24 +161,61 @@
                     gridlines: {
                         color: 'transparent'
                     },
-                    title: 'Available Bikes'
+                    title: '\n\n\n\nAvailable Bikes',
+                    textPosition: 'out'
+                },
+                hAxis: {
+                    slantedText: true,
+                    slantedTextAngle: 45
                 }
+            };
+
+            var options2 = {
+                titlePosition: 'none',
+                legend: {
+                    position: 'none'
+                },
+                curveType: 'function',
+                colors: ['lightcoral'],
+                bar: {
+                    gap: 10
+                },
+                gridlines: {
+                    color: 'none'
+                },
+                vAxis: {
+                    gridlines: {
+                        color: 'transparent'
+                    },
+                    title: '\n\n\n\nAvailable Bikes',
+                    textPosition: 'out'
+                },
+
+
             };
             var chart = new google.visualization.ColumnChart(document.getElementById("id01"));
             chart.draw(data, options);
+            var chart2 = new google.visualization.ColumnChart(document.getElementById("id02"));
+            chart2.draw(data2, options2);
         }
-
     </script>
 </head>
 
 <body>
-    <header></header>
-    
+    <header>
+        <img id="headerimage" src="{{ url_for('static', filename='Dublin_Bikes_logo.jpg') }}">
+        <h1 id="headertitle">dublinbikes Station Info</h1>
+    </header>
+
     <div id="wrapper">
         <div id="googleMap"></div>
-        <div id="id01"></div>
+        <div id="additonalInfo">
+            <div id="id01"></div>
+            <div id="id02"></div>
+        </div>
+
     </div>
-    
+
 </body>
 <script>
 </script>
