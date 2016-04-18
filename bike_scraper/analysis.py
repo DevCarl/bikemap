@@ -41,7 +41,7 @@ class GatherData:
             print("Database Connection Failure!")
             return None 
         
-    def generate_json(self, hourly, daily):
+    def generate_json(self, hourly, daily, free_time):
         
         
         
@@ -51,6 +51,7 @@ class GatherData:
         d = collections.OrderedDict()
         d['Daily'] = daily
         d['Times'] = hourly
+        d['Free_Time'] = free_time
 
             
             

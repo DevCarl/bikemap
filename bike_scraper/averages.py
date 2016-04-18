@@ -30,11 +30,12 @@ class averager(object):
         return dailyData
         
         
-    def calculate_freetime(self, c, id, day):
+    def calculate_freetime(self, cur, id, day):
+        day = self.getDay(day)
         freetimedetails = []
-        totalRequests = c.execute('SELECT strftime("%H",Time_Stamp)/3, count(*) FROM Station_data WHERE Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)/3', (id, day))
+        totalRequests = cur.execute('SELECT strftime("%H",Time_Stamp)/3, count(*) FROM Station_data WHERE Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)/3', (id, day))
         total = totalRequests.fetchall()
-        empty_requests = c.execute('SELECT strftime("%H",Time_Stamp)/3, count(*) FROM Station_data WHERE Bikes_Available = 0 AND Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)/3', (id, day))
+        empty_requests = cur.execute('SELECT strftime("%H",Time_Stamp)/3, count(*) FROM Station_data WHERE Bikes_Available = 0 AND Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)/3', (id, day))
         empty = empty_requests.fetchall()
         for detail in range(0, len(total)):
             full = total[detail][1]
@@ -45,6 +46,7 @@ class averager(object):
             if average_wait_time%1*100 >= 1:
                 average_wait_time_minutes += 1
             freetimedetails.append(average_wait_time_minutes)
+        print(freetimedetails)
         return freetimedetails
     
     def getHour(self, h):

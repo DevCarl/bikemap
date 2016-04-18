@@ -34,7 +34,8 @@ def jsonstuff(sid, day):
     cur = get_db().cursor()
     hourly = ave.getHourAverage(cur, sid, day)
     daily = ave.getDayAverage(cur, sid)
-    jsonFile = jsonFetcher.generate_json(hourly, daily)
+    free_time = ave.calculate_freetime(cur, sid, day)
+    jsonFile = jsonFetcher.generate_json(hourly, daily, free_time)
     return jsonFile
     
 

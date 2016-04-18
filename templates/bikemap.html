@@ -129,6 +129,7 @@
         function drawChart(dailydata) {
             console.log(dailydata[0].Times);
             console.log(dailydata[0].Daily);
+            console.log(dailydata[0].Free_Time);
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Time');
             data.addColumn('number', 'Available Bikes');
@@ -161,6 +162,16 @@
             data2.addRow(["Thursday", parseInt(dailydata[0].Daily[4])]);
             data2.addRow(["Friday", parseInt(dailydata[0].Daily[5])]);
             data2.addRow(["Saturday", parseInt(dailydata[0].Daily[6])]);
+            
+            var data3 = new google.visualization.DataTable();
+            data3.addColumn('string', 'Time');
+            data3.addColumn('number', 'Available Bikes');
+            data3.addRow(["6am-9am", dailydata[0].Free_Time[0]]);
+            data3.addRow(["9am-12pm", dailydata[0].Free_Time[1]]);
+            data3.addRow(["12pm-3pm", dailydata[0].Free_Time[2]]);
+            data3.addRow(["3pm-6pm", dailydata[0].Free_Time[3]]);
+            data3.addRow(["6pm-9pm", dailydata[0].Free_Time[4]]);
+            data3.addRow(["9pm-12am", dailydata[0].Free_Time[5]]);
 
 
             var options = {
@@ -216,10 +227,42 @@
 
 
             };
+            
+            var options3 = { 
+                animation: {"startup": true,
+                           duration: 1000,
+                            easing: 'out'},
+                titlePosition: 'none',
+                legend: {
+                    position: 'none'
+                },
+                curveType: 'function',
+                colors: ['#084C55'],
+                bar: {
+                    gap: 10
+                },
+                gridlines: {
+                    color: 'none'
+                },
+                                vAxis: { 
+              title: "Percentage Uptime", 
+              viewWindowMode:'explicit',
+              viewWindow:{
+                min:0},
+                    gridlines: {
+                        color: 'transparent'
+                    },
+                    title: '\n\n\n\nTime (minutes)',
+                    textPosition: 'out'
+                },
+            };
             var chart = new google.visualization.ColumnChart(document.getElementById("hourlyChart"));
             chart.draw(data, options);
             var chart2 = new google.visualization.ColumnChart(document.getElementById("dailyChart"));
             chart2.draw(data2, options2);
+            var chart3 = new google.visualization.ColumnChart(document.getElementById("freeTimeChart"));
+            chart3.draw(data3, options3);
+        
         }
     </script>
 </head>
@@ -254,6 +297,7 @@
                     <li onclick="createChart('Sunday')">Sunday</li>
                 </ul>
                 <div id="hourlyChart"></div>
+                <div id="freeTimeChart"></div>
             </div>
             <div id="dchartarea">
                 <div id=dcharttitle><h4>Daily Average Available Bikes</h4></div>
