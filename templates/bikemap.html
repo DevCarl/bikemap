@@ -56,7 +56,7 @@
                             position: coords,
                             map: map,
                             icon: iconColor,
-                            title: bikesites[i].number.toString()
+                            title: bikesites[i].address
                         });
                         (function(marker, data) {
 
@@ -165,7 +165,7 @@
             
             var data3 = new google.visualization.DataTable();
             data3.addColumn('string', 'Time');
-            data3.addColumn('number', 'Available Bikes');
+            data3.addColumn('number', 'Waiting Time (minutes)');
             data3.addRow(["6am-9am", dailydata[0].Free_Time[0]]);
             data3.addRow(["9am-12pm", dailydata[0].Free_Time[1]]);
             data3.addRow(["12pm-3pm", dailydata[0].Free_Time[2]]);
@@ -175,6 +175,7 @@
 
 
             var options = {
+                backgroundColor: { fill: "transparent" },
                 animation: {"startup": true,
                            duration: 1000,
                             easing: 'out'},
@@ -278,15 +279,16 @@
             <div class="sectionTitle">
                 <h2>Station Map</h2>
             </div>
+            <!--<div id="keyArea">
+
+            
+            </div>-->
             <div id="googleMap"></div>
         </div>
         
         <div id="additionalInfo">
             <div id="infoTitle"></div>
             <div id="hchartarea">
-                <div id=hcharttitle><h4>Hourly Average Available Bikes on:&nbsp; </h4><h4 id="selectedDay">Monday</h4></div>
-                                
-                
                 <ul id="daylist">
                     <li onclick="createChart('Monday')">Monday</li>
                     <li onclick="createChart('Tuesday')">Tuesday</li>
@@ -296,11 +298,13 @@
                     <li onclick="createChart('Saturday')">Saturday</li>
                     <li onclick="createChart('Sunday')">Sunday</li>
                 </ul>
+                <div class="chartTitle"><h4>Hourly Average Available Bikes on:&nbsp; </h4><h4 id="selectedDay">Monday</h4></div>
                 <div id="hourlyChart"></div>
+                <div class="chartTitle"><h4>Average Waiting Time for Available Bike</h4></div>
                 <div id="freeTimeChart"></div>
             </div>
             <div id="dchartarea">
-                <div id=dcharttitle><h4>Daily Average Available Bikes</h4></div>
+                <div class=chartTitle><h4>Daily Average Available Bikes</h4></div>
                 <div id="dailyChart"></div>
             </div>
         </div>

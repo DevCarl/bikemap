@@ -32,6 +32,30 @@ header{
     margin-left: 10px;
 }
 
+#keyArea{
+    width: 60%;
+    height: 50px;
+    background-color: white;
+    border: 2px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+}
+
+#keyArea h4{
+    font-family: Arial;
+    display: inline-block;
+}
+
+#redblock{
+    height: 30px; 
+    width: 80px; 
+    background-color: #FD7567; 
+    display: inline-block;
+}
+
+
+
 .moreinfo{
     text-align: center;
     color: deepskyblue;
@@ -71,10 +95,12 @@ header{
 #additionalInfo{
     background-color: white;
     border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
     display: none;
     width: 100%;
     text-align: center;
-    margin: 5px;
+    padding-bottom: 5px;
 }
 
 #additionalInfo h2{
@@ -107,12 +133,13 @@ header{
     cursor: pointer;
 }
 
-#hcharttitle h4{
+
+.chartTitle h4{
     display: inline-block;
     vertical-align: top;
     font-family: Arial;
     padding: 0;
-    margin: 0;
+    padding-top: 8px;
 }
 
 #dcharttitle h4{
