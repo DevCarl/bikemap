@@ -3,8 +3,8 @@ import datetime
 
 class averager(object):
     def getHourAverage(self, cur, id, day):
-        #This function will take in a day of the week as a string and return the average
-        #available bikes for that DAY
+        '''THe function takes in as parameters a cursor to a database, the day of the week to be queried and the station id and returns the average
+        available bikes available in the station for an hourly basis'''
         hourlyData = []
         selected_day = self.getDay(day)
         data = cur.execute('SELECT round(avg(Bikes_Available)) FROM Station_data WHERE Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)', (id, selected_day))  
@@ -16,7 +16,8 @@ class averager(object):
         return hourlyData
         
     def getDayAverage(self, cur, id):
-        
+        '''This function just takes in as parameters a cursor to a database and the station ID to be queried and returns the overall average
+        available bike count for each day of the week'''
         dailyData = []
         
         
@@ -57,12 +58,14 @@ class averager(object):
         return freetimedetails
     
     def getHour(self, h):
+        '''Returns the hour of the day used in an SQL query as a string'''
         if h < 10:
             return "0" + str(h)
         else:
             return str(h)
         
     def getDay(self, d):
+        '''Returns the day of the week as it is represented in SQLite as a string that can be used for comparison'''
         days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         return str(days.index(d))
     

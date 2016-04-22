@@ -8,25 +8,31 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!--This is used to import the API from google-->
     <script>
-        var map;
-        var currentStation;
-        var currentStationNo;
+        var map; //Global map variable that cna be accessed by multiple functions
+        var currentStation; //String variable set to the name of the current station being queries
+        var currentStationNo; //Int value set to the station number of the current station being queried
 
         function initialize() {
-            console.log("callecd");
-            //The mapProp function is used to define the properties of the google map that we will embed to the page
+            //This function is used to initialize the google map settings which includes setting the starting position
+            //and plotting pointers on the map
+            
+            
+            //The mapProp object is used to define the properties of the google map that we will embed to the page
             var mapProp = {
                 center: new google.maps.LatLng(53.348096, -6.261584),
                 zoom: 13,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
-            //This creates a new object in the googleMap div
+            
+            //This creates a new google map object and inserts into a html div
             map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-
+            
+            //
             addMarkers(map);
         }
 
         function addMarkers(map) {
+            //This is the default function for adding markers. It adds 
             var xmlhttp = new XMLHttpRequest();
             var url = "https://api.jcdecaux.com/vls/v1/stations?contract=Dublin&apiKey=ecb685c01e04147581cfd3c43376765a5ca1098f";
 
@@ -97,10 +103,16 @@
             //Set the additional info title
             document.getElementById("infoTitle").innerHTML = '<h2>Information for: '+ currentStation + '</h2>';
             document.getElementById("additionalInfo").style.display = 'block';
+            
+            scrollWin();
+            
             //Create the charts
             createChart('Monday');
         }
-
+        
+        function scrollWin() {
+            document.getElementById('infoTitle').scrollIntoView();
+        }
 
         function createChart(requestedDay) {
             console.log(currentStation);
@@ -279,10 +291,6 @@
             <div class="sectionTitle">
                 <h2>Station Map</h2>
             </div>
-            <!--<div id="keyArea">
-
-            
-            </div>-->
             <div id="googleMap"></div>
         </div>
         

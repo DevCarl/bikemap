@@ -9,7 +9,7 @@ import atexit
 import calendar
 
 class BikeScraper:
-""" The class creates an object with all the functions required to update collected data to the database """
+    """ The class creates an object with all the functions required to update collected data to the database """
     
     count = 0
     connection = sqlite3.connect("bikedata.db")
@@ -29,7 +29,8 @@ class BikeScraper:
             return None
             
     def read_data(self):
-    """Input: Self, Output: Data inserted into database, Function: This function inputs data from a text file into the previously created database"""
+        """Input: Self, Output: Data inserted into database, Function: This function inputs 
+        data from a text file into the previously created database"""
         try:
             # These will open both Data and Completed text files
             inputfile = open("Data.txt", "r")
