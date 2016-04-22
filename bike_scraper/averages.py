@@ -32,21 +32,28 @@ class averager(object):
         
     def calculate_freetime(self, cur, id, day):
         day = self.getDay(day)
+        # First we start with an empty array
         freetimedetails = []
+        # This will pull data regarding stations overall
         totalRequests = cur.execute('SELECT strftime("%H",Time_Stamp)/3, count(*) FROM Station_data WHERE Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)/3', (id, day))
         total = totalRequests.fetchall()
+        # This will pull data regarding stations if a stop is empty at one point during a three hour period
         empty_requests = cur.execute('SELECT strftime("%H",Time_Stamp)/3, count(*) FROM Station_data WHERE Bikes_Available = 0 AND Station_Number = ? AND strftime("%H",Time_Stamp) >= "06" AND strftime("%w",Time_Stamp) IN (?) GROUP BY strftime("%H",Time_Stamp)/3', (id, day))
         empty = empty_requests.fetchall()
         for detail in range(0, len(total)):
             full = total[detail][1]
+            # This will pull the relevant empty data from the query, if it matches a station number found in total.
             emptydata = [val[1] for val in empty if val[0] == total[detail][0]]
+            # This will set the value of empty data to 0 if a station number is never empty
             emptydata = 0 if len(emptydata) == 0 else emptydata[0]
+            # This is the weighted calculation, where we get the percentage of emptyness during a three hour period, then get the average of that.
             average_wait_time = (emptydata/full)*180*emptydata/full
+            # The next three lines gets it to the closest minute, averaged upwards.
             average_wait_time_minutes = int(average_wait_time//1)
             if average_wait_time%1*100 >= 1:
                 average_wait_time_minutes += 1
             freetimedetails.append(average_wait_time_minutes)
-        print(freetimedetails)
+        # print(freetimedetails)
         return freetimedetails
     
     def getHour(self, h):
