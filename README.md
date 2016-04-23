@@ -7,13 +7,13 @@ The bikemap application frontend is written in [HTML5](https://www.w3.org/TR/htm
 Both the frontend and the backend use the [JCDecaux Dublin Bikes API](https://developer.jcdecaux.com/#/opendata/vls?page=getstarted) to gather bike information. The frontend displays live data requests from the API. The backend requests data every 5mins and saves to a database for processing.
 
 ##Install 
-The following steps describe the process to run the application in a Ubuntu Linux environment. The locations and steps may differ in other environments.
-Install python3, python3-pip, apache2 and libapache2-mod-wsgi-py3 using `apt-get install`.
-Install flask and sqlite3 using `pip3 install`
+The following steps describe the process to run the application in a *Ubuntu Linux* environment. The locations and steps may differ in other environments.
+Install *python3*, *python3-pip*, *apache2* and *libapache2-mod-wsgi-py3* using `apt-get install`.
+Install *flask* and *sqlite3* using `pip3 install`
 
-The entire package should be placed inside the /var/www/html/ where it can be hosted by the Apache server. The file ec2*******.com.conf contains the configuration for the Apache Virtual Host and must be copied to /etc/apache2/sites-available/. The file is configured for a specific domain name. The filename and ServerName within the script must be changed to reflect the domain name of the target server. Restart apache `service apache2 restart`
+The entire package should be placed inside the */var/www/html/* where it can be hosted by the *Apache* server. The file _ec2*******.com.conf_ contains the configuration for the Apache Virtual Host and must be copied to */etc/apache2/sites-available/*. The file is configured for a specific domain name. The *filename* and *ServerName* within the script must be changed to reflect the domain name of the target server. Restart apache `service apache2 restart`
 
-If you wish to gather new data `python3 /bikemap/bike_scraper/__init__.py &`, the application will connect to the JCDecaux API every 5mins and leave the shell accessible.
+If you wish to gather new data `python3 /bikemap/bike_scraper/__init__.py &`, the application will connect to the *JCDecaux API* every 5mins and leave the shell accessible.
 
 #User Instructions
 When the user accesses the homepage, a map is presented to them with markers placed on all the Dublin bike stations across Dublin city. The icons are color coded in order to allow the user to quickly identify the occupancy of an individual station just by looking at it.
