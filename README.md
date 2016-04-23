@@ -14,6 +14,8 @@ To run a local instance of the application, simply download the applicaton files
 
 After downloading the file, run the application from the command line using `python application.py`. Note that you will need Flask installed in order to run the application. Once the application has begun to run the interface can be accessed through the broswer from your localhost at: http://127.0.0.1:5000
 
+###Server Install
+
 The following steps describe the process to run the application in a *Ubuntu Linux* environment. The locations and steps may differ in other environments.
 Install *python3*, *python3-pip*, *apache2* and *libapache2-mod-wsgi-py3* using `apt-get install`.
 Install *flask* and *sqlite3* using `pip3 install`
