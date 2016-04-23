@@ -7,6 +7,13 @@ The bikemap application frontend is written in [HTML5](https://www.w3.org/TR/htm
 Both the frontend and the backend use the [JCDecaux Dublin Bikes API](https://developer.jcdecaux.com/#/opendata/vls?page=getstarted) to gather bike information. The frontend displays live data requests from the API. The backend requests data every 5mins and saves to a database for processing.
 
 ##Install 
+
+###Local Install
+
+To run a local instance of the application, simply download the applicaton files from the github directory: https://github.com/harneyp2/bikemap
+
+After downloading the file, run the application from the command line using `python application.py`. Note that you will need Flask installed in order to run the application. Once the application has begun to run the interface can be accessed through the broswer from your localhost at: http://127.0.0.1:5000
+
 The following steps describe the process to run the application in a *Ubuntu Linux* environment. The locations and steps may differ in other environments.
 Install *python3*, *python3-pip*, *apache2* and *libapache2-mod-wsgi-py3* using `apt-get install`.
 Install *flask* and *sqlite3* using `pip3 install`
