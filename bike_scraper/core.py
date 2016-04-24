@@ -12,7 +12,7 @@ class BikeScraper:
     """ The class creates an object with all the functions required to update collected data to the database """
     
     count = 0
-    connection = sqlite3.connect("bikedata.db")
+    connection = sqlite3.connect(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'data/bikedata.db')))
 
     def create_database(self):
         """Input: None, Output: A created database, Function: This will create a database if one did not exist"""

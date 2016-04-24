@@ -3,14 +3,14 @@ from flask import g
 import sqlite3
 
 from bike_scraper.core import *
-from bike_scraper.analysis import GatherData
+from bike_scraper.json_generator import *
 from bike_scraper.averages import *
 
 app = Flask(__name__)
 
 #Declaratin of our objects and database directory
-DATABASE = 'bike_scraper/bikedata.db'
-jsonFetcher = GatherData()
+DATABASE = 'data/bikedata.db'
+jsonFetcher = json_generator()
 scraper = BikeScraper()
 ave = averager()
 

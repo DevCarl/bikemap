@@ -1,7 +1,9 @@
 __author__ = 'devin'
 import sqlite3
-
-connection = sqlite3.connect("bikedata.db")
+import os
+db_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'data/bikedata.db'))
+print(db_path)
+connection = sqlite3.connect(db_path)
 try:
     c = connection.cursor()
     c.execute('''ALTER TABLE Station_Details RENAME TO Station_Details_Temp ''')

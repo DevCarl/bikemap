@@ -27,7 +27,7 @@
             //This creates a new google map object and inserts into a html div
             map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
             
-            //
+            //add the markers to the map
             addMarkers(map);
         }
 
@@ -104,10 +104,11 @@
             document.getElementById("infoTitle").innerHTML = '<h2>Information for: '+ currentStation + '</h2>';
             document.getElementById("additionalInfo").style.display = 'block';
             
-            scrollWin();
-            
             //Create the charts
             createChart('Monday');
+            
+            //Auto scroll down to show the user the charts
+            scrollWin();
         }
         
         function scrollWin() {
@@ -115,8 +116,7 @@
         }
 
         function createChart(requestedDay) {
-            console.log(currentStation);
-            console.log(currentStationNo);
+            
             document.getElementById("selectedDay").innerHTML = requestedDay;
             var xmlhttp2 = new XMLHttpRequest();
             var url = "/getjson/" + currentStationNo + "/" + requestedDay;
