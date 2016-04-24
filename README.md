@@ -24,6 +24,16 @@ The entire package should be placed inside the */var/www/html/* where it can be 
 
 If you wish to gather new data `python3 /bikemap/bike_scraper/__init__.py &`, the application will connect to the *JCDecaux API* every 5mins and leave the shell accessible.
 
+#Testing 
+
+In order to run our tests, you can navigate to the tests folder using the command line. From there, you can enter in nosetests and it will do the work for you. Nosetests is required to implement the tests part of this.
+
+The tests created for our Bike Scraper project test for the base cases of our database functionality. In order, it will test if a database has been created, if it is created empty and will test that we can fetch information from the Bike_Scraper API.
+
+Finally, we complete a set up to build a database off of a test database to test if we can actually insert data into our database. During teardown, we remove the new database that has been created for these tests and rename the completed.txt into Data.txt so our tests are completely re-usable.
+
+We decided that the basic functionality of the database is the most important part of our project to test as it is the centre of where we place and retrieve data from. For all other aspects, such as the Javascript and Python, we implemented a validation stage and passed our code over to another member of the team to test, once it had passed inspection from the impartial member of the team, it could be moved into our completed stage.
+
 #User Instructions
 When the user accesses the homepage, a map is presented to them with markers placed on all the Dublin bike stations across Dublin city. The icons are color coded in order to allow the user to quickly identify the occupancy of an individual station just by looking at it.
 
